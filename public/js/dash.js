@@ -1,8 +1,167 @@
+// Called when page is first loaded
+function loadStats(){
+    ake();
+}
 
+function ake() {
+    let e = document.getElementById("sel");
+    let value = e.options[e.selectedIndex].value;
 
+    // Called to get enrollment for each school
+    axios.get(`/enrollment-stats/${value}`)
+        .then(function (response) {
+            // handle success
+            console.log(response.data);
 
+            let data = response.data;
+            let school = data.school;
+            let boysPlot = JSON.parse(data.boys).map(myFunction);
+            let girlsPlot = JSON.parse(data.girls).map(myFunction);
 
-  
+            // call the chart function
+            char_enrollment(school, boysPlot, girlsPlot);
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function () {
+            // always executed
+        });
+
+    // Called for chart_attendance for each school
+    axios.get(`/attendance/${value}`)
+        .then(function (response) {
+            // handle success
+            console.log(response.data);
+
+            let data = response.data;
+            let school = data.school;
+            let boysPlot = JSON.parse(data.boys).map(myFunction);
+            let girlsPlot = JSON.parse(data.girls).map(myFunction);
+
+            // call the chart function
+            chart_attendance(school, boysPlot, girlsPlot);
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
+        .finally(function () {
+            // always executed
+        });
+
+    // Called for teacher pupil ratio
+
+}
+
+function myFunction(num) {
+    return parseInt(num, 10);
+}
+
+function char_enrollment(school, boysPlot, girlsPlot) {
+    var ctxx = document.getElementById("mySuperChart").getContext("2d");
+    var myChart = new Chart(ctxx, {
+        type: 'bar',
+        data: {
+            labels: [
+                "p1",
+                "p2",
+                "p3",
+                "p4",
+                "p5",
+                "p6",
+                "p7"
+            ],
+            datasets: [
+                {
+                    label: "Boys",
+                    backgroundColor: "pink",
+                    borderColor: "red",
+                    borderWidth: 1,
+                    data: boysPlot
+                },
+                {
+                    label: "Girls",
+                    backgroundColor: "lightblue",
+                    borderColor: "blue",
+                    borderWidth: 1,
+                    data: girlsPlot
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: "top"
+            },
+            title: {
+                display: true,
+                text: school
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+function chart_attendance(school, boysPlot, girlsPlot) {
+    var ctxx = document.getElementById("chart_attendance").getContext("2d");
+    var myChart = new Chart(ctxx, {
+        type: 'line',
+        data: {
+            labels: [
+                "P1",
+                "P2",
+                "P3",
+                "P4",
+                "P5",
+                "P6",
+                "P7"
+            ],
+            datasets: [
+                {
+                    label: "Boys Attendence",
+                    backgroundColor: "pink",
+                    borderColor: "red",
+                    borderWidth: 1,
+                    data: boysPlot
+                },
+                {
+                    label: "Girls Attendence",
+                    backgroundColor: "lightblue",
+                    borderColor: "blue",
+                    borderWidth: 1,
+                    data: girlsPlot
+                },
+
+            ]
+        },
+        options: {
+            responsive: true,
+            legend: {
+                position: "top"
+            },
+            title: {
+                display: true,
+                text: school
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
 
 /*var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -81,33 +240,27 @@ var myChart = new Chart(ctx, {
 // });
 
 
-
-
-
-  
-
-
 //leaflet js
 var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
 
 var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	maxZoom: 19,
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(mymap);
 
 
 var planes = [
-    ["refactory",51.5, -0.09],
-    ["laboremus",51.502, -0.10],
-    ["geo gecko",51.508, -0.11],
-    ["kiu",51.509, -0.12]
+    ["refactory", 51.5, -0.09],
+    ["laboremus", 51.502, -0.10],
+    ["geo gecko", 51.508, -0.11],
+    ["kiu", 51.509, -0.12]
 ];
 
-for(var i = 0; i < planes.length; i++) {
-marker = new L.marker([planes[i][1],planes[i][2]])
-            .bindPopup(planes[i][0])
-            .addTo(mymap);
+for (var i = 0; i < planes.length; i++) {
+    marker = new L.marker([planes[i][1], planes[i][2]])
+        .bindPopup(planes[i][0])
+        .addTo(mymap);
 }
 
 
@@ -119,10 +272,10 @@ var circle = L.circle([51.510, -0.11], {
 }).addTo(mymap);
 
 //nasted pie 
-var randomScalingFactor = function() {
+var randomScalingFactor = function () {
     return Math.round(Math.random() * 100);
 };
-var randomColorFactor = function() {
+var randomColorFactor = function () {
     return Math.round(Math.random() * 255);
 };
 
@@ -137,7 +290,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -152,7 +305,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -167,7 +320,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -192,10 +345,10 @@ var ctx = document.getElementById("chart-area").getContext("2d");
 var myDoughnut = new Chart(ctx, config);
 
 //nasted pie two
-var randomScalingFactor = function() {
+var randomScalingFactor = function () {
     return Math.round(Math.random() * 100);
 };
-var randomColorFactor = function() {
+var randomColorFactor = function () {
     return Math.round(Math.random() * 255);
 };
 
@@ -210,7 +363,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -225,7 +378,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -240,7 +393,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -265,10 +418,10 @@ var ctx = document.getElementById("nasted2").getContext("2d");
 var myDoughnut = new Chart(ctx, config);
 
 //nasted pie three
-var randomScalingFactor = function() {
+var randomScalingFactor = function () {
     return Math.round(Math.random() * 100);
 };
-var randomColorFactor = function() {
+var randomColorFactor = function () {
     return Math.round(Math.random() * 255);
 };
 
@@ -283,7 +436,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -298,7 +451,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -313,7 +466,7 @@ var config = {
                 randomScalingFactor(),
                 randomScalingFactor(),
             ],
-                backgroundColor: [
+            backgroundColor: [
                 "#F7464A",
                 "#46BFBD",
                 "#FDB45C",
@@ -376,76 +529,6 @@ var chart = new Chart(ctx, {
         }
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //bar chart begins here

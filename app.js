@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use('/',express.static(path.join(__dirname, 'public')));
 
 app.use('/', dashboardRouter);
-app.use('/', attendenceRouter);
+app.use('/chart_attendance', attendenceRouter);
 
 
 // catch 404 and forward to error handler
